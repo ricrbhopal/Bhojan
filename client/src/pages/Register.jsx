@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import api from "../config/api";
 
 const Register = () => {
   const [registerData, setRegisterData] = useState({
@@ -15,16 +16,25 @@ const Register = () => {
     setRegisterData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (registerData.password !== registerData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    // Further submission logic here
-    toast.success("Registered successfully");
     console.log(registerData);
+    // Further submission logic here
+    try {
+      const res = await api.post("/auth/register", registerData);
+      toast.success(res.data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error?.response?.status + " | " + error?.response?.data?.message ||
+          "Unknow Error From Server"
+      );
+    }
   };
 
   return (
