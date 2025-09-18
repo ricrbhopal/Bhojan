@@ -4,11 +4,13 @@ import express from "express";
 import connectDB from "./src/config/db.js";
 import cors from "cors";
 import AuthRouter from "./src/routes/authRouter.js";
+import morgan from "morgan";
 
 const app = express();
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+app.use(morgan("dev"));
 
 app.use("/api/auth", AuthRouter);
 

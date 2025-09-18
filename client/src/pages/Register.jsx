@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../config/api";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [registerData, setRegisterData] = useState({
     fullName: "",
     email: "",
@@ -28,11 +29,12 @@ const Register = () => {
     try {
       const res = await api.post("/auth/register", registerData);
       toast.success(res.data.message);
+      navigate("/login");
     } catch (error) {
       console.log(error);
       toast.error(
         error?.response?.status + " | " + error?.response?.data?.message ||
-          "Unknow Error From Server"
+          "Unknown Error From Server"
       );
     }
   };

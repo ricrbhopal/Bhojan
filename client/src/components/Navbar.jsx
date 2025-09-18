@@ -1,8 +1,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
+  const { user, isLogin } = useAuth();
   const [selectedTheme, setSelectedTheme] = useState(
     localStorage.getItem("BhojanTheme") || "light"
   );
@@ -57,13 +59,32 @@ const Navbar = () => {
             </Link>
           </li>
         </ul>
-        <div className="flex gap-4">
-          <button
-            className="btn btn-secondary"
-            onClick={() => naviagte("/Login")}
-          >
-            Login
-          </button>
+        <div className="flex gap-4 items-center">
+          {isLogin && user ? (
+            <div
+              className="flex gap-3 items-center cursor-pointer"
+              onClick={() => naviagte("/dashboard")}
+            >
+              <div className="h-12 w-12 rounded-full border overflow-hidden">
+                <img
+                  src={user.photo}
+                  alt="userPicture"
+                  className="h-full w-full rounded-full object-cover"
+                />
+              </div>
+
+              <span className="text-primary-content text-2xl">
+                {user.fullName.split(" ")[0]}
+              </span>
+            </div>
+          ) : (
+            <button
+              className="btn btn-secondary"
+              onClick={() => naviagte("/Login")}
+            >
+              Login
+            </button>
+          )}
 
           <div className="select-floating  bg-transparent">
             <select
