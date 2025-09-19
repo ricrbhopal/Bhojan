@@ -6,12 +6,14 @@ const genToken = (userId, res) => {
       expiresIn: "1d",
     });
 
-    res.cookie("LoginKey", token, {
+    res.cookie("BhojanLoginKey", token, {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       sameSite: "lax",
       secure: true,
     });
+    console.log(token);
+
     return true;
   } catch (error) {
     return false;
