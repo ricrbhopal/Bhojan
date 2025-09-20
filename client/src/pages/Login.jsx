@@ -4,9 +4,12 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import api from "../config/api";
 import { useAuth } from "../context/authContext";
+import ForgetPassModal from "../components/pageModals/ForgetPassModal";
 
 const Login = () => {
   const { setUser, setIsLogin } = useAuth();
+  const [isForgetpasswordModalOpen, setIsForgetpasswordModalOpen] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -80,6 +83,33 @@ const Login = () => {
                 required
               />
             </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="rememberme"
+                  id="rememberme"
+                  className="accent-primary"
+                />
+                <label
+                  htmlFor="rememberme"
+                  className="ml-2 text-sm text-base-content"
+                >
+                  Remember me
+                </label>
+              </div>
+              <div>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsForgetpasswordModalOpen(true);
+                  }}
+                  className="text-sm text-secondary hover:underline hover:text-primary"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+            </div>
             <button type="submit" className="btn btn-primary w-full">
               Login
             </button>
@@ -92,6 +122,11 @@ const Login = () => {
           </p>
         </motion.div>
       </div>
+
+      <ForgetPassModal
+        isOpen={isForgetpasswordModalOpen}
+        onClose={() => setIsForgetpasswordModalOpen(false)}
+      />
     </>
   );
 };

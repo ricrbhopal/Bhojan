@@ -12,6 +12,7 @@ const Dashboard = () => {
   const { isLogin } = useAuth();
   const navigate = useNavigate();
   const [active, setActive] = useState("overview");
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(true);
 
   useEffect(() => {
     !isLogin && navigate("/");
@@ -21,10 +22,19 @@ const Dashboard = () => {
     <>
       {isLogin && (
         <div className="flex min-h-[91vh] ">
-          <div className="border border-success w-3/17">
-            <Sidebar active={active} setActive={setActive} />
+          <div
+            className={`border border-success overflow-hidden ${
+              isSideMenuOpen === true ? "w-[230px]" : "w-[60px]"
+            } transition-all duration-200`}
+          >
+            <Sidebar
+              active={active}
+              setActive={setActive}
+              isSideMenuOpen={isSideMenuOpen}
+              setIsSideMenuOpen={setIsSideMenuOpen}
+            />
           </div>
-          <div className="border border-primary w-14/17">
+          <div className="border border-primary w-full p-3">
             {active === "overview" && <Overview />}
             {active === "profile" && <Profile />}
             {active === "orders" && <Orders />}
