@@ -79,6 +79,10 @@ export const Login = async (req, res, next) => {
         fullName: existingUser.fullName,
         email: existingUser.email,
         photo: existingUser.photo,
+        gender: existingUser.gender,
+        phone: existingUser.phone,
+        dob: existingUser.dob,
+        foodType: existingUser.foodType,
       },
     });
   } catch (error) {
@@ -233,7 +237,7 @@ export const ForgetPassword = async (req, res, next) => {
     currentUser.password = hashedPassword;
     await currentUser.save();
 
-    res.clearCookie("BhojanFP"); 
+    res.clearCookie("BhojanFP");
     res.status(200).json({ message: "Password Change Successful" });
   } catch (error) {
     next(error);

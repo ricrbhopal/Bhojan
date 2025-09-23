@@ -4,11 +4,13 @@ import { useAuth } from "../../context/authContext";
 import { FaUserSlash, FaUserEdit } from "react-icons/fa";
 import { GoPasskeyFill } from "react-icons/go";
 import ResetPassword from "./modals/ResetPassword";
+import EditProfileModal from "./modals/EditProfileModal";
 
 const Profile = () => {
   const { user } = useAuth();
 
   const [isResetPassModalOpen, setIsResetPassModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
   return (
     <>
@@ -41,8 +43,14 @@ const Profile = () => {
                   Gender:
                 </label>
                 <span className="text-base-content">
-                  {user.gender || "N/A"}
+                  {user.gender.toUpperCase() || "N/A"}
                 </span>
+              </div>
+              <div className="flex gap-3">
+                <label className="block font-medium text-base-content mb-1">
+                  Phone Number:
+                </label>
+                <span className="text-base-content">{user.phone || "N/A"}</span>
               </div>
               <div className="flex gap-3">
                 <label className="block font-medium text-base-content mb-1">
@@ -52,16 +60,10 @@ const Profile = () => {
               </div>
               <div className="flex gap-3">
                 <label className="block font-medium text-base-content mb-1">
-                  City:
-                </label>
-                <span className="text-base-content">{user.city || "N/A"}</span>
-              </div>
-              <div className="flex gap-3">
-                <label className="block font-medium text-base-content mb-1">
-                  Appetite Type:
+                  Food Type:
                 </label>
                 <span className="text-base-content">
-                  {user.appetiteType || "N/A"}
+                  {user.foodType.toUpperCase() || "N/A"}
                 </span>
               </div>
             </div>
@@ -73,7 +75,10 @@ const Profile = () => {
             <FaUserSlash />
             <span>Deactivate</span>
           </button>
-          <button className="btn btn-primary flex items-center gap-2">
+          <button
+            className="btn btn-primary flex items-center gap-2"
+            onClick={() => setIsEditProfileModalOpen(true)}
+          >
             <FaUserEdit />
             <span>Edit Profile</span>
           </button>
@@ -90,6 +95,11 @@ const Profile = () => {
       <ResetPassword
         isOpen={isResetPassModalOpen}
         onClose={() => setIsResetPassModalOpen(false)}
+      />
+
+      <EditProfileModal
+        isOpen={isEditProfileModalOpen}
+        onClose={() => setIsEditProfileModalOpen(false)}
       />
     </>
   );
