@@ -10,7 +10,6 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
   const [isOTPVerified, setIsOTPVerified] = useState(false);
 
   const [changePass, setChangePass] = useState({
-    email: email,
     newpassword: "",
     confirmPassword: "",
   });
@@ -18,17 +17,42 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
   const handleForgetPassword = async (e) => {
     e.preventDefault();
     if (!isOTPsent) {
-      //Calling Backedn API to sent OTP
-      console.log("OTP Sent Now");
-      setIsOTPsent(true);
+      try {
+        const res = await api.post("/auth/sendOTP", { email });
+        toast.success(res.data.message);
+        setIsOTPsent(true);
+      } catch (error) {
+        console.log(error);
+        toast.error(
+          error?.response?.status + " | " + error?.response?.data?.message ||
+            "Unknown Error From Server"
+        );
+      }
     } else {
       if (!isOTPVerified) {
-        //Calling Backend API to verify OTP
-        console.log("OTP Verified");
-        setIsOTPVerified(true);
+        try {
+          const res = await api.post("/auth/verifyOTP", { email, otp });
+          toast.success(res.data.message);
+          setIsOTPVerified(true);
+        } catch (error) {
+          console.log(error);
+          toast.error(
+            error?.response?.status + " | " + error?.response?.data?.message ||
+              "Unknown Error From Server"
+          );
+        }
       } else {
-        //call Change Password
-        console.log("Password Changed");
+        try {
+          const res = await api.post("/auth/forgetpassword", changePass);
+          toast.success(res.data.message);
+          handleCloseClick();
+        } catch (error) {
+          console.log(error);
+          toast.error(
+            error?.response?.status + " | " + error?.response?.data?.message ||
+              "Unknown Error From Server"
+          );
+        }
       }
     }
   };
@@ -39,7 +63,6 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
     setOTP("");
     setIsOTPVerified(false);
     setChangePass({
-      email: "",
       newpassword: "",
       confirmPassword: "",
     });

@@ -30,3 +30,32 @@ export const Protect = async (req, res, next) => {
     next(error);
   }
 };
+
+export const ProtectFP = async (req, res, next) => {
+  try {
+    const token = req.cookies.BhojanFP;
+
+    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    console.log(decode);
+    if (!decode) {
+      const error = new Error("Not Authorized, No Token Found");
+      error.statusCode = 401;
+      throw error;
+    }
+    const verifiedUser = await User.findOne(decode.email);
+
+    if (!verifiedUser) {
+      const error = new Error("Not Authorized, Invalid User");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    console.log(verifiedUser);
+
+    req.user = verifiedUser;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
