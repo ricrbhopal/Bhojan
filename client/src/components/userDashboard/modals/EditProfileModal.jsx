@@ -47,7 +47,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const res = await api.post("/user/update", formData, {
+      const res = await api.put("/user/update", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -130,72 +130,66 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
-              <div className="bg-base-100 rounded-lg w-full">
-                <div className="space-y-6 p-6">
-                  <div className="flex gap-3 items-center">
-                    <label className="block font-medium text-base-content mb-1">
-                      Gender:
-                    </label>
-                    <select
-                      name="gender"
-                      id=""
-                      className="select select-bordered w-full"
-                      value={editUser.gender}
-                      onChange={handleChange}
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <label className="block font-medium text-base-content mb-1">
-                      Phone Number:
-                    </label>
-                    <input
-                      type="text"
-                      name="phone"
-                      className="input"
-                      value={editUser.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <label className="block font-medium text-base-content mb-1">
-                      Date of Birth:
-                    </label>
-                    <input
-                      type="date"
-                      name="dob"
-                      className="input"
-                      value={editUser.dob}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <label className="block font-medium text-base-content mb-1">
-                      Food Type:
-                    </label>
-                    <select
-                      name="foodType"
-                      id=""
-                      className="select select-bordered w-full"
-                      value={editUser.foodType}
-                      onChange={handleChange}
-                    >
-                      <option value="veg">Vegetarian</option>
-                      <option value="non-veg">Non-Vegetarian</option>
-                      <option value="eggetarian">Eggetarian</option>
-                      <option value="vegan">Vegan</option>
-                      <option value="jain">Jain</option>
-                      <option value="any">Any</option>
-                    </select>
-                  </div>
-                  <div className="flex justify-end">
-                    <button className="btn btn-primary" onClick={handleSubmit}>
-                      Save Changes
-                    </button>
-                  </div>
+
+              <div className="bg-base-100 rounded-lg w-full p-4">
+                <div className="grid grid-cols-[30%_70%] gap-4 p-4">
+                  <label className="block font-medium text-base-content mb-1">
+                    Gender:
+                  </label>
+                  <select
+                    name="gender"
+                    id=""
+                    className="select select-bordered w-full"
+                    value={editUser.gender}
+                    onChange={handleChange}
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <label className="block font-medium text-base-content mb-1">
+                    Date of Birth:
+                  </label>
+                  <input
+                    type="date"
+                    name="dob"
+                    className="input"
+                    value={editUser.dob}
+                    onChange={handleChange}
+                  />
+                  <label className="block font-medium text-base-content mb-1">
+                    Food Type:
+                  </label>
+                  <select
+                    name="foodType"
+                    id=""
+                    className="select select-bordered w-full"
+                    value={editUser.foodType}
+                    onChange={handleChange}
+                  >
+                    <option value="veg">Vegetarian</option>
+                    <option value="non-veg">Non-Vegetarian</option>
+                    <option value="eggetarian">Eggetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="jain">Jain</option>
+                    <option value="any">Any</option>
+                  </select>
+
+                  <label className="block font-medium text-base-content mb-1">
+                    Phone Number:
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    className="input"
+                    value={editUser.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button className="btn btn-primary" onClick={handleSubmit}>
+                    Save Changes
+                  </button>
                 </div>
               </div>
             </div>

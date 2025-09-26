@@ -57,6 +57,8 @@ export const Login = async (req, res, next) => {
       return next(error);
     }
 
+    
+
     const isPasswordCorrect = await bcrypt.compare(
       password,
       existingUser.password

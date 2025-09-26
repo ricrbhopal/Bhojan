@@ -19,6 +19,9 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    PhotoPublicId: {
+      type: String,
+    },
     gender: {
       type: String,
       enum: ["male", "female", "other"],
@@ -32,13 +35,21 @@ const userSchema = mongoose.Schema(
     dob: {
       type: String,
       required: true,
-      default: "01/01/2000",
+      default: "2000-01-01",
     },
     foodType: {
       type: String,
       required: true,
       enum: ["veg", "non-veg", "eggetarian", "jain", "vegan", "any"],
       default: "veg",
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "blocked"],
+      default: "active",
+    },
+    Remarks: {
+      type: String,
     },
   },
   { timestamps: true }
