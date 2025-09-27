@@ -7,6 +7,7 @@ import {
   SendOTP,
   verifyOTP,
   ForgetPassword,
+  GoogleLogin
 } from "../controller/authController.js";
 import { Protect, ProtectFP } from "../middlewares/authMiddleware.js";
 
@@ -20,5 +21,7 @@ router.patch("/resetpassword", Protect, ResetPassword);
 router.post("/sendOtp", SendOTP);
 router.post("/verifyOtp", verifyOTP);
 router.post("/forgetpassword", ProtectFP, ForgetPassword);
+
+router.post("/googlelogin", GoogleLogin);
 
 export default router;

@@ -14,6 +14,18 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
+      default: "N/A",
+    },
+    googleId: {
+      type: String,
+      required: true,
+      default: "N/A",
+    },
+    registrationType: {
+      type: String,
+      enum: ["email", "google"],
+      required: true,
+      default: "email",
     },
     photo: {
       type: String,

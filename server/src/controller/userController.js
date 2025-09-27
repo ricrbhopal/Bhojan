@@ -54,6 +54,7 @@ export const Update = async (req, res, next) => {
         phone: currentUser.phone,
         dob: currentUser.dob,
         foodType: currentUser.foodType,
+        registrationType: currentUser.registrationType,
       },
     });
   } catch (error) {

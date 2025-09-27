@@ -5,13 +5,40 @@ import { motion } from "framer-motion";
 import api from "../config/api";
 import { useAuth } from "../context/authContext";
 import ForgetPassModal from "../components/pageModals/ForgetPassModal";
+import { useGoogleAuth } from "../context/GoogleAuth";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const { setUser, setIsLogin } = useAuth();
+  const { isLoading, error, isInitialized, signInWithGoogle } = useGoogleAuth();
   const [isForgetpasswordModalOpen, setIsForgetpasswordModalOpen] =
     useState(false);
 
   const navigate = useNavigate();
+
+  const GoogleLogin = () => {
+    signInWithGoogle(handleGoogleSuccess, handleGoogleFailure);
+  };
+
+  const handleGoogleFailure = (error) => {
+    console.error("Google login failed:", error);
+    toast.error("Google login failed. Please try again.");
+  };
+
+  const handleGoogleSuccess = async (userData) => {
+    try {
+      console.log("Google login success:", userData);
+      const res = await api.post("/auth/googlelogin", userData);
+      toast.success(res.data.message);
+      setUser(res.data.data);
+      setIsLogin(true);
+      sessionStorage.setItem("BhojanUser", JSON.stringify(res.data.data));
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Google login failed. Please try again.");
+    }
+  };
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -114,10 +141,36 @@ const Login = () => {
               Login
             </button>
           </form>
+          <div className="divider">OR</div>
+          <div>
+            {error ? (
+              <button
+                className="btn btn-outline btn-error font-sans flex items-center justify-center gap-2 m-2 w-full"
+                disabled
+              >
+                <FcGoogle className="text-xl" />
+                {error}
+              </button>
+            ) : (
+              <button
+                onClick={GoogleLogin}
+                className="btn btn-outline font-sans flex items-center justify-center gap-2 m-2 w-full"
+                disabled={!isInitialized || isLoading}
+              >
+                <FcGoogle className="text-xl" />
+                {isLoading
+                  ? "Loading..."
+                  : isInitialized
+                  ? "Continue with Google"
+                  : "Google Auth Error"}
+              </button>
+            )}
+          </div>
+          <div className="divider">OR</div>
           <p className="text-sm text-center text-secondary">
             Don't have an account?{" "}
             <Link to={"/register"} className="text-primary hover:underline">
-              Register
+              Register with us
             </Link>
           </p>
         </motion.div>

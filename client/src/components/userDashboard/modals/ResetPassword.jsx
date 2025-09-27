@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { RxCrossCircled } from "react-icons/rx";
 import api from "../../../config/api";
-
+import { useAuth } from "../../../context/authContext";
 
 const ResetPassword = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   const [resetPassForm, setResetPassForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -18,14 +19,24 @@ const ResetPassword = ({ isOpen, onClose }) => {
       return;
     }
     try {
-        const res = await api.patch("/auth/resetpassword", resetPassForm);
-        toast.success(res.data.message);
-        setResetPassForm({
-            currentPassword: "",
-            newPassword: "",
-            confirmNewPassword: "",
+      let res;
+      if (user.registrationType !== "google") {
+        console.log("Resetting Password for email user");
+        res = await api.patch("/auth/resetpassword", resetPassForm);
+      } else {
+        console.log("Resetting Password for Google user");
+        res = await api.patch("/auth/resetpassword", {
+          currentPassword: "N/A",
+          newPassword: resetPassForm.newPassword,
         });
-        onClose();
+      }
+      toast.success(res.data.message);
+      setResetPassForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+      onClose();
     } catch (error) {
       console.log(error);
       toast.error(
@@ -56,18 +67,20 @@ const ResetPassword = ({ isOpen, onClose }) => {
               className="flex flex-col gap-4"
               onSubmit={handleResetPassword}
             >
-              <label className="flex flex-col">
-                <span className="mb-1">Current Password</span>
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={resetPassForm.currentPassword}
-                  className="input input-bordered"
-                  placeholder="Enter current password"
-                  onChange={handleChange}
-                  required
-                />
-              </label>
+              {user.registrationType === "email" && (
+                <label className="flex flex-col">
+                  <span className="mb-1">Current Password</span>
+                  <input
+                    type="password"
+                    name="currentPassword"
+                    value={resetPassForm.currentPassword}
+                    className="input input-bordered"
+                    placeholder="Enter current password"
+                    onChange={handleChange}
+                    required
+                  />
+                </label>
+              )}
               <label className="flex flex-col">
                 <span className="mb-1">New Password</span>
                 <input

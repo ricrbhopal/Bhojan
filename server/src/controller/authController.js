@@ -30,6 +30,7 @@ export const Register = async (req, res, next) => {
       email,
       password: hashedPassword,
       photo,
+      registrationType: "email",
     });
 
     res.status(200).json({
@@ -57,8 +58,6 @@ export const Login = async (req, res, next) => {
       return next(error);
     }
 
-    
-
     const isPasswordCorrect = await bcrypt.compare(
       password,
       existingUser.password
@@ -85,6 +84,7 @@ export const Login = async (req, res, next) => {
         phone: existingUser.phone,
         dob: existingUser.dob,
         foodType: existingUser.foodType,
+        registrationType: existingUser.registrationType,
       },
     });
   } catch (error) {
@@ -109,16 +109,20 @@ export const ResetPassword = async (req, res, next) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const currentUser = req.user;
+
+    console.log(currentPassword, newPassword, currentUser);
+
     if (!currentPassword || !newPassword) {
       const error = new Error("All Fields Required");
       error.statusCode = 404;
       return next(error);
     }
 
-    const isVerified = await bcrypt.compare(
-      currentPassword,
-      currentUser.password
-    );
+    let isVerified = true;
+    if (currentPassword !== "N/A") {
+      isVerified = await bcrypt.compare(currentPassword, currentUser.password);
+    }
+
     if (!isVerified) {
       const error = new Error("Current Password is Incorrect");
       error.statusCode = 401;
@@ -241,6 +245,103 @@ export const ForgetPassword = async (req, res, next) => {
 
     res.clearCookie("BhojanFP");
     res.status(200).json({ message: "Password Change Successful" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const GoogleLogin = async (req, res, next) => {
+  try {
+    const { email, name, id, imageUrl } = req.body;
+    if (!email || !name || !id || !imageUrl) {
+      const error = new Error("All Fields Required");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      const hashedGoogelId = await bcrypt.hash(id, 10);
+      const newUser = await User.create({
+        fullName: name,
+        email,
+        googleId: hashedGoogelId,
+        photo: imageUrl,
+        registrationType: "google",
+      });
+
+      if (!genToken(newUser._id, res)) {
+        const error = new Error("Unable to Login");
+        error.statusCode = 403;
+        return next(error);
+      }
+
+      res.status(200).json({
+        message: `Welcome, ${newUser.fullName}`,
+        data: {
+          fullName: newUser.fullName,
+          email: newUser.email,
+          photo: newUser.photo,
+          gender: newUser.gender,
+          phone: newUser.phone,
+          dob: newUser.dob,
+          foodType: newUser.foodType,
+          registrationType: newUser.registrationType,
+        },
+      });
+    } else if (existingUser && registrationType === "email") {
+      const hashedGoogelId = await bcrypt.hash(id, 10);
+      existingUser.googleId = hashedGoogelId;
+      existingUser.registrationType = "google";
+      await existingUser.save();
+
+      if (!genToken(existingUser._id, res)) {
+        const error = new Error("Unable to Login");
+        error.statusCode = 403;
+        return next(error);
+      }
+
+      res.status(200).json({
+        message: `Welcome back, ${existingUser.fullName}`,
+        data: {
+          fullName: existingUser.fullName,
+          email: existingUser.email,
+          photo: existingUser.photo,
+          gender: existingUser.gender,
+          phone: existingUser.phone,
+          dob: existingUser.dob,
+          foodType: existingUser.foodType,
+          registrationType: existingUser.registrationType,
+        },
+      });
+    } else {
+      const isgoogleIdCorrect = await bcrypt.compare(id, existingUser.googleId);
+      if (!isgoogleIdCorrect) {
+        const error = new Error("Invalid Credentials");
+        error.statusCode = 401;
+        return next(error);
+      }
+
+      if (!genToken(existingUser._id, res)) {
+        const error = new Error("Unable to Login");
+        error.statusCode = 403;
+        return next(error);
+      }
+
+      res.status(200).json({
+        message: `Welcome back, ${existingUser.fullName}`,
+        data: {
+          fullName: existingUser.fullName,
+          email: existingUser.email,
+          photo: existingUser.photo,
+          gender: existingUser.gender,
+          phone: existingUser.phone,
+          dob: existingUser.dob,
+          foodType: existingUser.foodType,
+          registrationType: existingUser.registrationType,
+        },
+      });
+    }
   } catch (error) {
     next(error);
   }
