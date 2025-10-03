@@ -8,7 +8,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import UserRouter from "./src/routes/userRouter.js";
 import cloudinary from "./src/config/cloudinary.js";
-
+import AdminRouter from "./src/routes/adminRoutes.js";
 const app = express();
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
@@ -16,8 +16,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-app.use("/api/auth", AuthRouter);
-app.use("/api/user", UserRouter);
+app.use("/admin", AdminRouter);
+app.use("/auth", AuthRouter);
+app.use("/user", UserRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Server Connected and Working" });
