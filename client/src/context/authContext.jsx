@@ -7,7 +7,7 @@ export const AuthProvider = (props) => {
     JSON.parse(sessionStorage.getItem("BhojanUser")) || ""
   );
   const [isLogin, setIsLogin] = useState(!!user);
-  const [isAdmin, setIsAdmin] = useState(!!user?.role === "admin");
+  const [isAdmin, setIsAdmin] = useState(user?.role === "admin");
 
   useEffect(() => {
     // if (user) {
@@ -24,7 +24,7 @@ export const AuthProvider = (props) => {
     //   setIsAdmin(false);
     // }
 
-    setIsAdmin(!!user?.role === "admin");
+    setIsAdmin(user?.role === "admin");
   }, [user]);
 
   const value = { user, setUser, isLogin, setIsLogin, isAdmin, setIsAdmin };

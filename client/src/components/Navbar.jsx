@@ -4,18 +4,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
-  const { user, isLogin } = useAuth();
+  const { user, isLogin, isAdmin } = useAuth();
   const [selectedTheme, setSelectedTheme] = useState(
     localStorage.getItem("BhojanTheme") || "light"
   );
 
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", selectedTheme);
     localStorage.setItem("BhojanTheme", selectedTheme);
   }, [selectedTheme]);
 
+  console.log(isAdmin)
   return (
     <>
       <nav className="bg-primary px-4 py-2 flex items-center justify-between">
@@ -63,7 +64,9 @@ const Navbar = () => {
           {isLogin && user ? (
             <div
               className="flex gap-3 items-center cursor-pointer"
-              onClick={() => naviagte("/dashboard")}
+              onClick={() =>
+                isAdmin ? navigate("/adminDashboard") : navigate("/dashboard")
+              }
             >
               <div className="h-12 w-12 rounded-full border overflow-hidden">
                 <img
@@ -80,7 +83,7 @@ const Navbar = () => {
           ) : (
             <button
               className="btn btn-secondary"
-              onClick={() => naviagte("/Login")}
+              onClick={() => navigate("/login")}
             >
               Login
             </button>
