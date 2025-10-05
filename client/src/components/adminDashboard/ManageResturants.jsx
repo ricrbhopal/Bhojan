@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddRestaurantModal from "./modals/addResturantModal";
 import { FaEye, FaEdit, FaTrashAlt } from "react-icons/fa";
+import api from "../../config/api";
+import toast from "react-hot-toast";
 
 const dummyData = [
   {
@@ -65,7 +67,26 @@ const dummyData = [
 
 const ManageResturants = () => {
   const [isAddResturantModalOpen, setIsAddResturantModalOpen] = useState(false);
-  const [resturants, setResturants] = useState(dummyData);
+  const [resturants, setResturants] = useState([]);
+
+  const fetchResturants = async () => {
+    try {
+      const response = await api.get("/admin/getallresturants");
+      toast.success(response.data.message);
+      setResturants(response.data.data);
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error?.response?.status + " | " + error?.response?.data?.message ||
+          "Unknown Error From Server"
+      );
+      setResturants(dummyData); // Fallback to dummy data on error
+    }
+  };
+  useEffect(() => {
+    if (!isAddResturantModalOpen) fetchResturants();
+  }, [isAddResturantModalOpen]);
+
   return (
     <>
       <div className="flex justify-between items-center mb-4">
