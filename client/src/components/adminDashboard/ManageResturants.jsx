@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import AddRestaurantModal from "./modals/addResturantModal";
-import { FaEye, FaEdit, FaTrashAlt } from "react-icons/fa";
+import {
+  FaEye,
+  FaEdit,
+  FaLock,
+  FaLockOpen,
+  FaCheckCircle,
+} from "react-icons/fa";
+
+import { IoMdCloseCircle } from "react-icons/io";
+import { ImBlocked } from "react-icons/im";
+import { HiRefresh } from "react-icons/hi";
 import api from "../../config/api";
 import toast from "react-hot-toast";
 
@@ -67,12 +77,13 @@ const dummyData = [
 
 const ManageResturants = () => {
   const [isAddResturantModalOpen, setIsAddResturantModalOpen] = useState(false);
+
   const [resturants, setResturants] = useState([]);
 
   const fetchResturants = async () => {
     try {
       const response = await api.get("/admin/getallresturants");
-      toast.success(response.data.message);
+      //toast.success(response.data.message);
       setResturants(response.data.data);
     } catch (error) {
       console.log(error);
@@ -83,6 +94,29 @@ const ManageResturants = () => {
       setResturants(dummyData); // Fallback to dummy data on error
     }
   };
+
+  const handleStatusChange = async (restaurantId, newStatus) => {
+    toast.promise(
+      async () =>
+        await api.patch(`/admin/updatestatus/${restaurantId}`, {
+          status: newStatus,
+        }),
+      {
+        loading: "Updating Status...",
+        success: (response) => {
+          toast.success(response.data.message);
+          fetchResturants();
+        },
+        error: (error) => {
+          toast.error(
+            error?.response?.status + " | " + error?.response?.data?.message ||
+              "Unknown Error From Server"
+          );
+        },
+      }
+    );
+  };
+
   useEffect(() => {
     if (!isAddResturantModalOpen) fetchResturants();
   }, [isAddResturantModalOpen]);
@@ -102,42 +136,105 @@ const ManageResturants = () => {
         <table className="table">
           <thead>
             <tr>
+              <th className="w-2"></th>
               <th>Restaurant Name</th>
               <th>Manager Name</th>
               <th>Manager Phone</th>
               <th>Email</th>
-              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {resturants.map((restaurant, index) => (
               <tr key={index}>
-                <td>{restaurant.resturantName}</td>
-                <td>{restaurant.managerName}</td>
-                <td>{restaurant.managerPhone}</td>
-                <td>{restaurant.email}</td>
                 <td>
                   <span
-                    className={`badge badge-lg ${
+                    className={`flex justify-center items-center  ${
                       restaurant.status === "active"
-                        ? "badge-success"
-                        : "badge-error"
+                        ? "text-success"
+                        : "text-error"
                     }`}
+                    title={restaurant.status.toUpperCase()}
                   >
-                    {restaurant.status.toUpperCase()}
+                    {restaurant.status === "active" ? (
+                      <>
+                        <FaCheckCircle />
+                      </>
+                    ) : restaurant.status === "blocked" ? (
+                      <>
+                        <ImBlocked />
+                      </>
+                    ) : (
+                      <>
+                        <IoMdCloseCircle />
+                      </>
+                    )}
                   </span>
                 </td>
+                <td>{restaurant.resturantName}</td>
+                <td>{restaurant.managerName}</td>
                 <td>
-                  <button className="btn btn-sm btn-info mr-2">
+                  <a href={`tel:${restaurant.managerPhone}`}>
+                    {restaurant.managerPhone}
+                  </a>
+                </td>
+                <td>
+                  <a href={`mailto:${restaurant.email}`}>{restaurant.email}</a>
+                </td>
+                <td>
+                  <button
+                    className={`btn btn-sm mr-2 ${
+                      restaurant.status === "active"
+                        ? "btn-secondary"
+                        : "btn-success"
+                    }`}
+                    title={`${
+                      restaurant.status === "active" ? "Deactivate" : "Activate"
+                    } Restaurant  `}
+                    disabled={restaurant.status === "blocked"}
+                    onClick={() => {
+                      handleStatusChange(
+                        restaurant._id,
+                        restaurant.status === "active" ? "inactive" : "active"
+                      );
+                    }}
+                  >
+                    <HiRefresh />
+                  </button>
+                  <button
+                    className="btn btn-sm btn-info mr-2"
+                    title="View Details"
+                  >
                     <FaEye />
                   </button>
-                  <button className="btn btn-sm btn-warning mr-2">
+                  <button
+                    className="btn btn-sm btn-warning mr-2"
+                    title="Edit Restaurant"
+                    disabled={restaurant.status === "blocked"}
+                  >
                     <FaEdit />
                   </button>
-                  <button className="btn btn-sm btn-error">
-                    <FaTrashAlt />
-                  </button>
+                  {restaurant.status !== "blocked" ? (
+                    <button
+                      className="btn btn-sm btn-error"
+                      title="Block Restaurant"
+                      onClick={() =>
+                        handleStatusChange(restaurant._id, "blocked")
+                      }
+                    >
+                      <FaLock />
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-sm btn-success"
+                      title="Delete Restaurant"
+                      onClick={() =>
+                        handleStatusChange(restaurant._id, "inactive")
+                      }
+                    >
+                      <FaLockOpen />
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

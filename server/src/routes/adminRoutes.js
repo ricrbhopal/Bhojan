@@ -3,6 +3,7 @@ import {
   AdminLogin,
   AddResturant,
   GetAllResturants,
+  UpdateStatus
 } from "../controller/adminController.js";
 import { AdminProtect } from "../middlewares/authMiddleware.js";
 import multer from "multer";
@@ -19,5 +20,7 @@ router.post(
   upload.fields([{ name: "managerImage" }, { name: "restaurantImages" }]),
   AddResturant
 );
+
+router.patch("/updatestatus/:id", AdminProtect, UpdateStatus);
 
 export default router;

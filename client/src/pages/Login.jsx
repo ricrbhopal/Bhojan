@@ -17,6 +17,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   const GoogleLogin = () => {
+    if (!loginData.role) {
+      return toast.error("Please select a role to continue with Google");
+    }
     signInWithGoogle(handleGoogleSuccess, handleGoogleFailure);
   };
 
@@ -27,7 +30,6 @@ const Login = () => {
 
   const handleGoogleSuccess = async (userData) => {
     try {
-      console.log("Google login success:", userData);
       const res = await api.post("/auth/googlelogin", userData);
       toast.success(res.data.message);
       setUser(res.data.data);
@@ -41,6 +43,7 @@ const Login = () => {
   };
 
   const [loginData, setLoginData] = useState({
+    role: "",
     email: "",
     password: "",
   });
@@ -81,7 +84,57 @@ const Login = () => {
           <h2 className="text-4xl font-bold text-center text-base-content">
             Login
           </h2>
+
           <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="mb-4 flex justify-between items-center">
+              <label className="mb-1 text-md font-medium text-base-content">
+                I'm
+              </label>
+              <div className="flex gap-4 justify-between items-center mb-2">
+                <div>
+                  <input
+                    type="radio"
+                    id="user"
+                    name="role"
+                    value="user"
+                    onChange={handleChange}
+                    checked={loginData.role === "user"}
+                  />
+                  <label htmlFor="user" className="ml-2 text-base-content">
+                    User
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="restaurant"
+                    name="role"
+                    value="restaurant"
+                    onChange={handleChange}
+                    checked={loginData.role === "restaurant"}
+                  />
+                  <label
+                    htmlFor="restaurant"
+                    className="ml-2 text-base-content"
+                  >
+                    Restaurant
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    id="rider"
+                    name="role"
+                    value="rider"
+                    onChange={handleChange}
+                    checked={loginData.role === "rider"}
+                  />
+                  <label htmlFor="rider" className="ml-2 text-base-content">
+                    Rider
+                  </label>
+                </div>
+              </div>
+            </div>
             <div>
               <label className="block mb-1 text-sm font-medium text-base-content">
                 Email
@@ -141,37 +194,46 @@ const Login = () => {
               Login
             </button>
           </form>
-          <div className="divider">OR</div>
-          <div>
-            {error ? (
-              <button
-                className="btn btn-outline btn-error font-sans flex items-center justify-center gap-2 m-2 w-full"
-                disabled
-              >
-                <FcGoogle className="text-xl" />
-                {error}
-              </button>
-            ) : (
-              <button
-                onClick={GoogleLogin}
-                className="btn btn-outline font-sans flex items-center justify-center gap-2 m-2 w-full"
-                disabled={!isInitialized || isLoading}
-              >
-                <FcGoogle className="text-xl" />
-                {isLoading
-                  ? "Loading..."
-                  : isInitialized
-                  ? "Continue with Google"
-                  : "Google Auth Error"}
-              </button>
-            )}
-          </div>
+
+          {(loginData.role === "user" || loginData.role === "") && (
+            <div>
+              <div className="divider mb-4">OR</div>
+              {error ? (
+                <button
+                  className="btn btn-outline btn-error font-sans flex items-center justify-center gap-2 m-2 w-full"
+                  disabled
+                >
+                  <FcGoogle className="text-xl" />
+                  {error}
+                </button>
+              ) : (
+                <button
+                  onClick={GoogleLogin}
+                  className="btn btn-outline font-sans flex items-center justify-center gap-2 m-2 w-full"
+                  disabled={!isInitialized || isLoading}
+                >
+                  <FcGoogle className="text-xl" />
+                  {isLoading
+                    ? "Loading..."
+                    : isInitialized
+                    ? "Continue with Google"
+                    : "Google Auth Error"}
+                </button>
+              )}
+            </div>
+          )}
           <div className="divider">OR</div>
           <p className="text-sm text-center text-secondary">
-            Don't have an account?{" "}
-            <Link to={"/register"} className="text-primary hover:underline">
-              Register with us
-            </Link>
+            {(loginData.role === "restaurant" || loginData.role === "rider") ? (
+              <a href="mailto:support@example.com">Please contact support@example.com to create an account.</a>
+            ) : (
+              <>
+                "Don't have an account?{" "}
+                <Link to={"/register"} className="text-primary hover:underline">
+                  Register with us
+                </Link>
+              </>
+            )}
           </p>
         </motion.div>
       </div>

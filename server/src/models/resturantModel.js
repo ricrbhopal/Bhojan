@@ -67,7 +67,7 @@ const resturantSchema = mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["active", "inactive"],
+      enum: ["active", "inactive", "blocked"],
       default: "active",
     },
     openingTime: {

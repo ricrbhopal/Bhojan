@@ -186,11 +186,10 @@ export const AddResturant = async (req, res, next) => {
   }
 };
 
-
 export const GetAllResturants = async (req, res, next) => {
   try {
     const resturants = await Resturant.find().sort({ createdAt: -1 });
- 
+
     if (!resturants || resturants.length === 0) {
       const error = new Error("No Resturants Found");
       error.statusCode = 404;
@@ -199,6 +198,32 @@ export const GetAllResturants = async (req, res, next) => {
     res.status(200).json({
       message: "All Restaurants Fetched Successfully",
       data: resturants,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const UpdateStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const validStatuses = ["active", "inactive", "blocked"];
+    if (!validStatuses.includes(status)) {
+      const error = new Error("Invalid status value");
+      error.statusCode = 400;
+      return next(error);
+    }
+    const restaurant = await Resturant.findById(id);
+    if (!restaurant) {
+      const error = new Error("Restaurant not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+    restaurant.status = status;
+    await restaurant.save();
+    res.status(200).json({
+      message: `Restaurant status updated to ${status}`,
     });
   } catch (error) {
     next(error);

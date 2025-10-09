@@ -31,6 +31,7 @@ export const Register = async (req, res, next) => {
       password: hashedPassword,
       photo,
       registrationType: "email",
+      role: "user",
     });
 
     res.status(200).json({
@@ -43,7 +44,7 @@ export const Register = async (req, res, next) => {
 
 export const Login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { role, email, password } = req.body;
 
     if (!email || !password) {
       const error = new Error("All Feilds Required");
@@ -85,6 +86,7 @@ export const Login = async (req, res, next) => {
         dob: existingUser.dob,
         foodType: existingUser.foodType,
         registrationType: existingUser.registrationType,
+        role: existingUser.role,
       },
     });
   } catch (error) {
@@ -252,14 +254,16 @@ export const ForgetPassword = async (req, res, next) => {
 
 export const GoogleLogin = async (req, res, next) => {
   try {
-    const { email, name, id, imageUrl } = req.body;
+    const { email, name, id, imageUrl,  } = req.body;
     if (!email || !name || !id || !imageUrl) {
       const error = new Error("All Fields Required");
       error.statusCode = 404;
       return next(error);
     }
+    
 
     const existingUser = await User.findOne({ email });
+
     if (!existingUser) {
       const hashedGoogelId = await bcrypt.hash(id, 10);
       const newUser = await User.create({
@@ -268,6 +272,7 @@ export const GoogleLogin = async (req, res, next) => {
         googleId: hashedGoogelId,
         photo: imageUrl,
         registrationType: "google",
+        role,
       });
 
       if (!genToken(newUser._id, res)) {
