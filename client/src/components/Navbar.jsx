@@ -37,10 +37,10 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              to={"/about"}
+              to={"/resturants"}
               className="text-primary-content hover:font-bold transition"
             >
-              Menu
+              Resturants
             </Link>
           </li>
           <li>

@@ -131,9 +131,10 @@ export const AddResturant = async (req, res, next) => {
 
     const restaurantImages = [];
     // Upload Restaurant Images to Cloudinary
-    restaurantImageFiles.forEach(async (image) => {
-      const R_b64 = Buffer.from(image.buffer).toString("base64");
-      const R_dataURI = `data:${image.mimetype};base64,${R_b64}`;
+    const restaurantImagesPromises = restaurantImageFiles.map(async (file) => {
+      const R_b64 = Buffer.from(file.buffer).toString("base64");
+      const R_dataURI = `data:${file.mimetype};base64,${R_b64}`;
+
       const R_result = await cloudinary.uploader.upload(R_dataURI, {
         folder: `BhojanAdmin/Resturants/${resturantName}`,
         width: 500,
@@ -151,6 +152,9 @@ export const AddResturant = async (req, res, next) => {
       });
     });
 
+    await Promise.all(restaurantImagesPromises);
+    
+    console.log("restaurantImages:", restaurantImages);
     // Create new Resturant
     const newResturant = await Resturant.create({
       resturantName,
@@ -175,7 +179,7 @@ export const AddResturant = async (req, res, next) => {
       bankAccNumber,
       ifscCode,
       managerImage,
-      restaurantImages,
+      images:restaurantImages,
     });
     res.status(200).json({
       message: "Add Resturant Route",

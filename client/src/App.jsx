@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import Resturants from "./pages/Resturants";
+import ResturantDeatils from "./pages/resturantDeatils";
 
 const App = () => {
   return (
@@ -23,6 +25,9 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/adminDashboard" element={<AdminDashboard />} />
+          <Route path="/resturants" element={<Resturants />} />
+          <Route path="/resturantDetails" element={<ResturantDeatils />} />
+          <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </BrowserRouter>
     </>

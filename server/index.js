@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import UserRouter from "./src/routes/userRouter.js";
 import cloudinary from "./src/config/cloudinary.js";
 import AdminRouter from "./src/routes/adminRoutes.js";
+import PublicRouter from "./src/routes/publicRoutes.js";
 const app = express();
 
 app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
@@ -19,6 +20,7 @@ app.use(morgan("dev"));
 app.use("/admin", AdminRouter);
 app.use("/auth", AuthRouter);
 app.use("/user", UserRouter);
+app.use("/public", PublicRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Server Connected and Working" });

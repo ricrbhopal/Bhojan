@@ -27,7 +27,7 @@ export const Register = async (req, res, next) => {
     )}`;
     const newUser = await User.create({
       fullName,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       photo,
       registrationType: "email",
@@ -52,7 +52,7 @@ export const Login = async (req, res, next) => {
       return next(error);
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (!existingUser) {
       const error = new Error("User Not Found, Please Register");
       error.statusCode = 404;
@@ -254,13 +254,12 @@ export const ForgetPassword = async (req, res, next) => {
 
 export const GoogleLogin = async (req, res, next) => {
   try {
-    const { email, name, id, imageUrl,  } = req.body;
+    const { email, name, id, imageUrl } = req.body;
     if (!email || !name || !id || !imageUrl) {
       const error = new Error("All Fields Required");
       error.statusCode = 404;
       return next(error);
     }
-    
 
     const existingUser = await User.findOne({ email });
 
@@ -268,7 +267,7 @@ export const GoogleLogin = async (req, res, next) => {
       const hashedGoogelId = await bcrypt.hash(id, 10);
       const newUser = await User.create({
         fullName: name,
-        email,
+        email: email.toLowerCase(),
         googleId: hashedGoogelId,
         photo: imageUrl,
         registrationType: "google",

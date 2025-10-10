@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import { useEffect } from "react";
 
 const Home = () => {
-  return (
-    <div>Home</div>
-  )
-}
+  useEffect(() => {
+    document.title = "Bhojan | Home";
+  }, []);
+  
+  return <div>Home</div>;
+};
 
-export default Home
+export default Home;

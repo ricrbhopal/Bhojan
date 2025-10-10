@@ -7,6 +7,7 @@ import { useAuth } from "../context/authContext";
 import ForgetPassModal from "../components/pageModals/ForgetPassModal";
 import { useGoogleAuth } from "../context/GoogleAuth";
 import { FcGoogle } from "react-icons/fc";
+import { useEffect } from "react";
 
 const Login = () => {
   const { setUser, setIsLogin } = useAuth();
@@ -72,6 +73,9 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    document.title = "Bhojan | Login";
+  }, []);
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-base-100">
