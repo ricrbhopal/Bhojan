@@ -59,6 +59,7 @@ export const AddResturant = async (req, res, next) => {
       managerPhone,
       receptionPhone,
       email,
+      password,
       status,
       openingTime,
       closingTime,
@@ -82,6 +83,7 @@ export const AddResturant = async (req, res, next) => {
       !managerPhone ||
       !receptionPhone ||
       !email ||
+      !password ||
       !status ||
       !openingTime ||
       !closingTime ||
@@ -156,6 +158,8 @@ export const AddResturant = async (req, res, next) => {
     
     console.log("restaurantImages:", restaurantImages);
     // Create new Resturant
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newResturant = await Resturant.create({
       resturantName,
       address,
@@ -167,6 +171,7 @@ export const AddResturant = async (req, res, next) => {
       managerPhone,
       receptionPhone,
       email,
+      password:hashedPassword,
       status,
       openingTime,
       closingTime,

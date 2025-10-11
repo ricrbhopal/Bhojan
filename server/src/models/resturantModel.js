@@ -55,6 +55,10 @@ const resturantSchema = mongoose.Schema(
       required: true,
       default: "example@example.com",
     },
+    password: {
+      type: String,
+      required: true,
+    },
     images: {
       type: [
         {

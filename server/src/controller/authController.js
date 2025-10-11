@@ -1,8 +1,13 @@
-import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
+
 import { genToken, genForgetPassToken } from "../utils/jsonWebTokens.js";
-import OTP from "../models/OTPModel.js";
 import sendEmail from "../utils/sendEmail.js";
+
+// Import models
+import OTP from "../models/OTPModel.js";
+import User from "../models/userModel.js";
+import Resturant from "../models/resturantModel.js";
+import Rider from "../models/riderModel.js";
 
 export const Register = async (req, res, next) => {
   try {
@@ -143,9 +148,18 @@ export const ResetPassword = async (req, res, next) => {
 
 export const SendOTP = async (req, res, next) => {
   try {
-    const { email } = req.body;
+    const { email, role } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    let existingUser;
+
+    if (role === "user") {
+      existingUser = await User.findOne({ email });
+    } else if (role === "resturant") {
+      existingUser = await Resturant.findOne({ email });
+    } else if (role === "rider") {
+      existingUser = await Rider.findOne({ email });
+    }
+
     if (!existingUser) {
       const error = new Error("User Not Found, Please Register");
       error.statusCode = 404;
@@ -346,6 +360,82 @@ export const GoogleLogin = async (req, res, next) => {
         },
       });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const ResturantLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      const error = new Error("Email and Password are required");
+      error.statusCode = 400;
+      return next(error);
+    }
+    const existingResturant = await Resturant.findOne({ email });
+    if (!existingResturant) {
+      const error = new Error("Resturant not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    const isVerified = await bcrypt.compare(
+      password,
+      existingResturant.password
+    );
+    if (!isVerified) {
+      const error = new Error("Invalid Password");
+      error.statusCode = 401;
+      return next(error);
+    }
+    if (!genToken(existingResturant._id, res)) {
+      const error = new Error("Unable to Login");
+      error.statusCode = 403;
+      return next(error);
+    }
+
+    existingResturant.role = "resturant";
+    res.status(200).json({
+      message: "Resturant Logged In Successfully",
+      data: existingResturant,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const RiderLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      const error = new Error("Email and Password are required");
+      error.statusCode = 400;
+      return next(error);
+    }
+    const existingRider = await Rider.findOne({ email });
+    if (!existingRider) {
+      const error = new Error("Rider not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+    const isVerified = await bcrypt.compare(password, existingRider.password);
+    if (!isVerified) {
+      const error = new Error("Invalid Password");
+      error.statusCode = 401;
+      return next(error);
+    }
+    if (!genToken(existingRider._id, res)) {
+      const error = new Error("Unable to Login");
+      error.statusCode = 403;
+      return next(error);
+    }
+
+    existingRider.role = "rider";
+    res.status(200).json({
+      message: "Rider Logged In Successfully",
+      data: existingRider,
+    });
   } catch (error) {
     next(error);
   }

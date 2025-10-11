@@ -32,7 +32,6 @@ export const Protect = async (req, res, next) => {
   }
 };
 
-
 // Forget Password Protect middleware
 export const ProtectFP = async (req, res, next) => {
   try {
@@ -46,8 +45,18 @@ export const ProtectFP = async (req, res, next) => {
       error.statusCode = 401;
       throw error;
     }
-    const verifiedUser = await User.findOne(decode.email);
 
+    const { role } = req.body;
+
+    let verifiedUser;
+    if (role === "user") {
+      verifiedUser = await User.findOne(decode.email);
+    } else if (role === "resturant") {
+      verifiedUser = await Resturant.findOne(decode.email);
+    } else if (role === "rider") {
+      verifiedUser = await Rider.findOne(decode.email);
+    }
+    
     if (!verifiedUser) {
       const error = new Error("Not Authorized, Invalid User");
       error.statusCode = 401;
@@ -63,9 +72,7 @@ export const ProtectFP = async (req, res, next) => {
   }
 };
 
-
 //Admin protect middleware
-
 
 export const AdminProtect = async (req, res, next) => {
   try {

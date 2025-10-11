@@ -4,10 +4,12 @@ import { RxCrossCircled } from "react-icons/rx";
 import api from "../../config/api";
 
 const ForgetPassModal = ({ isOpen, onClose }) => {
+  const [role, setRole] = useState("");
   const [email, setEmail] = useState("");
   const [isOTPsent, setIsOTPsent] = useState(false);
   const [otp, setOTP] = useState("");
   const [isOTPVerified, setIsOTPVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [changePass, setChangePass] = useState({
     newpassword: "",
@@ -16,9 +18,14 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
 
   const handleForgetPassword = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     if (!isOTPsent) {
+      if (!role) {
+        setIsLoading(false);
+        return toast.error("Please select a role to continue");
+      }
       try {
-        const res = await api.post("/auth/sendOTP", { email });
+        const res = await api.post("/auth/sendOTP", { email, role });
         toast.success(res.data.message);
         setIsOTPsent(true);
       } catch (error) {
@@ -27,6 +34,8 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
           error?.response?.status + " | " + error?.response?.data?.message ||
             "Unknown Error From Server"
         );
+      } finally {
+        setIsLoading(false);
       }
     } else {
       if (!isOTPVerified) {
@@ -40,6 +49,8 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
             error?.response?.status + " | " + error?.response?.data?.message ||
               "Unknown Error From Server"
           );
+        } finally {
+          setIsLoading(false);
         }
       } else {
         try {
@@ -52,6 +63,8 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
             error?.response?.status + " | " + error?.response?.data?.message ||
               "Unknown Error From Server"
           );
+        } finally {
+          setIsLoading(false);
         }
       }
     }
@@ -59,6 +72,7 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
 
   const handleCloseClick = () => {
     setEmail("");
+    setRole("");
     setIsOTPsent(false);
     setOTP("");
     setIsOTPVerified(false);
@@ -75,6 +89,7 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
   };
 
   if (!isOpen) return null;
+
   return (
     <>
       <div className="fixed inset-0 flex justify-center bg-base-300/50">
@@ -90,6 +105,55 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
           </div>
           <div className="p-3">
             <form onSubmit={handleForgetPassword} className="space-y-4">
+              <div className="grid grid-cols-[20%_80%] items-center">
+                <label className="mb-1 text-md font-medium text-base-content">
+                  I'm
+                </label>
+                <div className="flex gap-4 justify-between items-center mb-2">
+                  <div>
+                    <input
+                      type="radio"
+                      id="user"
+                      name="role"
+                      value="user"
+                      onChange={() => setRole("user")}
+                      checked={role === "user"}
+                    />
+                    <label htmlFor="user" className="ml-2 text-base-content">
+                      User
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="resturant"
+                      name="role"
+                      value="resturant"
+                      onChange={() => setRole("resturant")}
+                      checked={role === "resturant"}
+                    />
+                    <label
+                      htmlFor="resturant"
+                      className="ml-2 text-base-content"
+                    >
+                      Resturant
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="radio"
+                      id="rider"
+                      name="role"
+                      value="rider"
+                      onChange={() => setRole("rider")}
+                      checked={role === "rider"}
+                    />
+                    <label htmlFor="rider" className="ml-2 text-base-content">
+                      Rider
+                    </label>
+                  </div>
+                </div>
+              </div>
               <div className="grid grid-cols-[20%_80%] items-center">
                 <label>Email</label>
                 <input
@@ -144,11 +208,17 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
                 </div>
               )}
               <div className="flex justify-center">
-                <button type="submit" className="btn btn-primary mt-2">
-                  {isOTPsent === true
+                <button
+                  type="submit"
+                  className="btn btn-primary mt-2"
+                  disabled={isLoading}
+                >
+                  {isLoading
+                    ? "Processing..."
+                    : isOTPsent === true
                     ? isOTPVerified === true
                       ? "Change Password"
-                      : "Verifiy Otp"
+                      : "Verify Otp"
                     : "Verify Email"}
                 </button>
               </div>

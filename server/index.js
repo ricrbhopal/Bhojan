@@ -1,15 +1,19 @@
-// import dotenv from "dotenv";
-// dotenv.config();
 import express from "express";
 import connectDB from "./src/config/db.js";
 import cors from "cors";
-import AuthRouter from "./src/routes/authRouter.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import UserRouter from "./src/routes/userRouter.js";
+
 import cloudinary from "./src/config/cloudinary.js";
-import AdminRouter from "./src/routes/adminRoutes.js";
-import PublicRouter from "./src/routes/publicRoutes.js";
+
+// Importing other routers
+import AuthRouter from "./src/routes/authRouter.js";
+import UserRouter from "./src/routes/userRouter.js";
+import AdminRouter from "./src/routes/adminRouter.js";
+import PublicRouter from "./src/routes/publicRouter.js";
+import ResturantRouter from "./src/routes/resturantRouter.js";
+
+
 const app = express();
 
 app.use(cors({ origin: ["http://localhost:5173"], credentials: true }));
@@ -21,6 +25,7 @@ app.use("/admin", AdminRouter);
 app.use("/auth", AuthRouter);
 app.use("/user", UserRouter);
 app.use("/public", PublicRouter);
+app.use("/resturant", ResturantRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Server Connected and Working" });

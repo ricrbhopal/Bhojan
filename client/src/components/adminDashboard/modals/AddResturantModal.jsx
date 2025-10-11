@@ -16,6 +16,8 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
     managerPhone: "",
     receptionPhone: "",
     email: "",
+    password: "",
+    confirmPassword: "",
     status: "active",
     openingTime: "",
     closingTime: "",
@@ -33,6 +35,7 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
   const [restaurantImagesPreview, setRestaurantImagesPreview] = useState([]);
   const [managerImageFiles, setManagerImageFiles] = useState("");
   const [restaurantImageFiles, setRestaurantImageFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Single change handler for all inputs
   const handleChange = (e) => {
@@ -74,6 +77,7 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     console.log("letsAdd a restaurant");
     try {
       const registerFromData = new FormData();
@@ -87,6 +91,7 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
       registerFromData.append("managerPhone", resturantData.managerPhone);
       registerFromData.append("receptionPhone", resturantData.receptionPhone);
       registerFromData.append("email", resturantData.email);
+      registerFromData.append("password", resturantData.password);
       registerFromData.append("status", resturantData.status);
       registerFromData.append("openingTime", resturantData.openingTime);
       registerFromData.append("closingTime", resturantData.closingTime);
@@ -120,6 +125,8 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
         error?.response?.status + " | " + error?.response?.data?.message ||
           "Unknown Error From Server"
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -252,6 +259,31 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
                       onChange={handleChange}
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Create Password
+                    </label>
+                    <input
+                      name="password"
+                      type="password"
+                      className="input  w-full"
+                      value={resturantData.password}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Confirm Password
+                    </label>
+                    <input
+                      name="confirmPassword"
+                      type="password"
+                      className="input  w-full"
+                      value={resturantData.confirmPassword}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
               </fieldset>
 
@@ -318,6 +350,7 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               </fieldset>
+
               {/* Address & Location */}
               <fieldset className="p-4 rounded border bg-base-100">
                 <legend className="text-lg font-semibold px-2">
@@ -490,11 +523,16 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
                   type="button"
                   className="btn btn-ghost"
                   onClick={onClose}
+                  disabled={isLoading}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Save
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Adding..." : "Add Restaurant"}
                 </button>
               </div>
             </form>

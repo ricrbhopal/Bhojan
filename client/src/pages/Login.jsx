@@ -10,7 +10,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useEffect } from "react";
 
 const Login = () => {
-  const { setUser, setIsLogin } = useAuth();
+  const { setUser, setIsLogin, setIsResturant, setIsRider } = useAuth();
   const { isLoading, error, isInitialized, signInWithGoogle } = useGoogleAuth();
   const [isForgetpasswordModalOpen, setIsForgetpasswordModalOpen] =
     useState(false);
@@ -58,12 +58,17 @@ const Login = () => {
     e.preventDefault();
     console.log(loginData);
     try {
-      const res = await api.post("/auth/login", loginData);
+      const res = await api.post(`/auth/${loginData.role}/login`, loginData);
       toast.success(res.data.message);
       setUser(res.data.data);
       setIsLogin(true);
       sessionStorage.setItem("BhojanUser", JSON.stringify(res.data.data));
-      navigate("/dashboard");
+      res.data.data.role === "user"
+        ? navigate("/dashboard")
+        : res.data.data.role === "resturant"
+        ? (navigate("/resturantdashboard"), setIsResturant(true))
+        : (navigate("/riderdashboard"), setIsRider(true));
+      console.log("Logged in user:", res.data.data);
     } catch (error) {
       console.log(error);
       toast.error(
@@ -113,15 +118,12 @@ const Login = () => {
                     type="radio"
                     id="restaurant"
                     name="role"
-                    value="restaurant"
+                    value="resturant"
                     onChange={handleChange}
-                    checked={loginData.role === "restaurant"}
+                    checked={loginData.role === "resturant"}
                   />
-                  <label
-                    htmlFor="restaurant"
-                    className="ml-2 text-base-content"
-                  >
-                    Restaurant
+                  <label htmlFor="resturant" className="ml-2 text-base-content">
+                    Resturant
                   </label>
                 </div>
                 <div>
@@ -228,8 +230,10 @@ const Login = () => {
           )}
           <div className="divider">OR</div>
           <p className="text-sm text-center text-secondary">
-            {(loginData.role === "restaurant" || loginData.role === "rider") ? (
-              <a href="mailto:support@example.com">Please contact support@example.com to create an account.</a>
+            {loginData.role === "restaurant" || loginData.role === "rider" ? (
+              <a href="mailto:support@example.com">
+                Please contact support@example.com to create an account.
+              </a>
             ) : (
               <>
                 "Don't have an account?{" "}

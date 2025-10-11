@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
-  const { user, isLogin, isAdmin } = useAuth();
+  const { user, isLogin, isAdmin, isResturant, isRider } = useAuth();
   const [selectedTheme, setSelectedTheme] = useState(
     localStorage.getItem("BhojanTheme") || "light"
   );
@@ -16,7 +16,7 @@ const Navbar = () => {
     localStorage.setItem("BhojanTheme", selectedTheme);
   }, [selectedTheme]);
 
-  console.log(isAdmin)
+  
   return (
     <>
       <nav className="bg-primary px-4 py-2 flex items-center justify-between">
@@ -65,19 +65,27 @@ const Navbar = () => {
             <div
               className="flex gap-3 items-center cursor-pointer"
               onClick={() =>
-                isAdmin ? navigate("/adminDashboard") : navigate("/dashboard")
+                isAdmin
+                  ? navigate("/adminDashboard")
+                  : isResturant
+                  ? navigate("/resturantdashboard")
+                  : isRider
+                  ? navigate("/riderdashboard")
+                  : navigate("/dashboard")
               }
             >
               <div className="h-12 w-12 rounded-full border overflow-hidden">
                 <img
-                  src={user.photo}
+                  src={isResturant ? user?.managerImage : user?.photo}
                   alt="userPicture"
                   className="h-full w-full rounded-full object-cover"
                 />
               </div>
 
               <span className="text-primary-content text-2xl">
-                {user.fullName.split(" ")[0]}
+                {isResturant
+                  ? user?.resturantName
+                  : user?.fullName?.split(" ")[0]}
               </span>
             </div>
           ) : (
