@@ -90,7 +90,7 @@ const AddRestaurantModal = ({ isOpen, onClose }) => {
       registerFromData.append("managerName", resturantData.managerName);
       registerFromData.append("managerPhone", resturantData.managerPhone);
       registerFromData.append("receptionPhone", resturantData.receptionPhone);
-      registerFromData.append("email", resturantData.email);
+      registerFromData.append("email", resturantData.email.toLowerCase());
       registerFromData.append("password", resturantData.password);
       registerFromData.append("status", resturantData.status);
       registerFromData.append("openingTime", resturantData.openingTime);

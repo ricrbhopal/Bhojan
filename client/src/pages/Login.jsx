@@ -57,13 +57,14 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(loginData);
+    loginData.email = loginData.email.toLowerCase();
     try {
       const res = await api.post(`/auth/${loginData.role}/login`, loginData);
       toast.success(res.data.message);
       setUser(res.data.data);
       setIsLogin(true);
       sessionStorage.setItem("BhojanUser", JSON.stringify(res.data.data));
-      res.data.data.role === "user"
+      res.data.data.role === "customer"
         ? navigate("/dashboard")
         : res.data.data.role === "resturant"
         ? (navigate("/resturantdashboard"), setIsResturant(true))
@@ -103,14 +104,14 @@ const Login = () => {
                 <div>
                   <input
                     type="radio"
-                    id="user"
+                    id="customer"
                     name="role"
-                    value="user"
+                    value="customer"
                     onChange={handleChange}
-                    checked={loginData.role === "user"}
+                    checked={loginData.role === "customer"}
                   />
-                  <label htmlFor="user" className="ml-2 text-base-content">
-                    User
+                  <label htmlFor="customer" className="ml-2 text-base-content">
+                    Customer
                   </label>
                 </div>
                 <div>
@@ -201,7 +202,7 @@ const Login = () => {
             </button>
           </form>
 
-          {(loginData.role === "user" || loginData.role === "") && (
+          {(loginData.role === "customer" || loginData.role === "") && (
             <div>
               <div className="divider mb-4">OR</div>
               {error ? (

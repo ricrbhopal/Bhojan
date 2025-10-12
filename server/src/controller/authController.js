@@ -36,7 +36,6 @@ export const Register = async (req, res, next) => {
       password: hashedPassword,
       photo,
       registrationType: "email",
-      role: "user",
     });
 
     res.status(200).json({
@@ -49,7 +48,7 @@ export const Register = async (req, res, next) => {
 
 export const Login = async (req, res, next) => {
   try {
-    const { role, email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       const error = new Error("All Feilds Required");
@@ -268,11 +267,17 @@ export const ForgetPassword = async (req, res, next) => {
 
 export const GoogleLogin = async (req, res, next) => {
   try {
-    const { email, name, id, imageUrl } = req.body;
-    if (!email || !name || !id || !imageUrl) {
+    let { email, name, id, imageUrl } = req.body;
+    if (!email || !name || !id) {
       const error = new Error("All Fields Required");
       error.statusCode = 404;
       return next(error);
+    }
+
+    if (!imageUrl) {
+      imageUrl = `https://placehold.co/600x400/EEE/31343C?font=poppins&text=${name.charAt(
+        0
+      )}`;
     }
 
     const existingUser = await User.findOne({ email });
@@ -285,7 +290,6 @@ export const GoogleLogin = async (req, res, next) => {
         googleId: hashedGoogelId,
         photo: imageUrl,
         registrationType: "google",
-        role,
       });
 
       if (!genToken(newUser._id, res)) {
@@ -330,6 +334,7 @@ export const GoogleLogin = async (req, res, next) => {
           dob: existingUser.dob,
           foodType: existingUser.foodType,
           registrationType: existingUser.registrationType,
+          role: existingUser.role,
         },
       });
     } else {
@@ -357,6 +362,7 @@ export const GoogleLogin = async (req, res, next) => {
           dob: existingUser.dob,
           foodType: existingUser.foodType,
           registrationType: existingUser.registrationType,
+          role: existingUser.role,
         },
       });
     }
@@ -389,13 +395,19 @@ export const ResturantLogin = async (req, res, next) => {
       error.statusCode = 401;
       return next(error);
     }
+
+    //manually add the role field
+    existingResturant.role = "resturant";
+
     if (!genToken(existingResturant._id, res)) {
       const error = new Error("Unable to Login");
       error.statusCode = 403;
       return next(error);
     }
 
-    existingResturant.role = "resturant";
+    console.log(existingResturant);
+    
+
     res.status(200).json({
       message: "Resturant Logged In Successfully",
       data: existingResturant,

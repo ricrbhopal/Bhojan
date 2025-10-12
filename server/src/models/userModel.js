@@ -57,8 +57,7 @@ const userSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "restaurant", "rider"],
-      required: true,
+      default: "customer",
     },
     status: {
       type: String,

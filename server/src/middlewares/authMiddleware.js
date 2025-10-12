@@ -49,7 +49,7 @@ export const ProtectFP = async (req, res, next) => {
     const { role } = req.body;
 
     let verifiedUser;
-    if (role === "user") {
+    if (role === "customer") {
       verifiedUser = await User.findOne(decode.email);
     } else if (role === "resturant") {
       verifiedUser = await Resturant.findOne(decode.email);

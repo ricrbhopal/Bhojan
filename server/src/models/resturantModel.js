@@ -124,6 +124,10 @@ const resturantSchema = mongoose.Schema(
       required: true,
       default: "IFSC0000",
     },
+    role: {
+      type: String,
+      default: "resturant",
+    },
   },
   { timestamps: true }
 );

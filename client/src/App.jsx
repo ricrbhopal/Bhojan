@@ -10,6 +10,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Resturants from "./pages/Resturants";
 import ResturantDeatils from "./pages/resturantDeatils";
+import ResturantDashboard from "./pages/ResturantDashboard";
 
 const App = () => {
   return (
@@ -26,7 +27,7 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/adminDashboard" element={<AdminDashboard />} />
           <Route path="/resturants" element={<Resturants />} />
-          <Route path="/resturantDetails" element={<ResturantDeatils />} />
+          <Route path="/resturantDashboard" element={<ResturantDashboard />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </BrowserRouter>

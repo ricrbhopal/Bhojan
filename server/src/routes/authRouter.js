@@ -16,7 +16,9 @@ import { Protect, ProtectFP } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.post("/register", Register);
-router.post("/user/login", Login);
+router.post("/customer/login", Login);
+router.post("/resturant/login", ResturantLogin);
+router.post("/rider/login", RiderLogin);
 router.get("/logout", Logout);
 router.patch("/resetpassword", Protect, ResetPassword);
 
@@ -25,8 +27,5 @@ router.post("/verifyOtp", verifyOTP);
 router.post("/forgetpassword", ProtectFP, ForgetPassword);
 
 router.post("/googlelogin", GoogleLogin);
-
-router.post("/resturant/login", ResturantLogin);
-router.post("/rider/login", RiderLogin);
 
 export default router;

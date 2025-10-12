@@ -113,14 +113,14 @@ const ForgetPassModal = ({ isOpen, onClose }) => {
                   <div>
                     <input
                       type="radio"
-                      id="user"
+                      id="customer"
                       name="role"
-                      value="user"
-                      onChange={() => setRole("user")}
-                      checked={role === "user"}
+                      value="customer"
+                      onChange={() => setRole("customer")}
+                      checked={role === "customer"}
                     />
-                    <label htmlFor="user" className="ml-2 text-base-content">
-                      User
+                    <label htmlFor="customer" className="ml-2 text-base-content">
+                      Customer
                     </label>
                   </div>
                   <div>

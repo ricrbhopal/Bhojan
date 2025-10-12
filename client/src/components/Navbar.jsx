@@ -60,10 +60,10 @@ const Navbar = () => {
             </Link>
           </li>
         </ul>
-        <div className="flex gap-4 items-center">
+        <div className="grid grid-cols-2 gap-4 items-center">
           {isLogin && user ? (
             <div
-              className="flex gap-3 items-center cursor-pointer"
+              className="flex w-full gap-3 items-center cursor-pointer"
               onClick={() =>
                 isAdmin
                   ? navigate("/adminDashboard")
@@ -76,17 +76,17 @@ const Navbar = () => {
             >
               <div className="h-12 w-12 rounded-full border overflow-hidden">
                 <img
-                  src={isResturant ? user?.managerImage : user?.photo}
+                  src={isResturant ? user?.managerImage.imageLink : user?.photo}
                   alt="userPicture"
-                  className="h-full w-full rounded-full object-cover"
+                  className="w-full h-full rounded-full object-cover"
                 />
               </div>
 
-              <span className="text-primary-content text-2xl">
+              <p className="text-primary-content text-xl font-semibold">
                 {isResturant
                   ? user?.resturantName
                   : user?.fullName?.split(" ")[0]}
-              </span>
+              </p>
             </div>
           ) : (
             <button

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import api from "../../config/api";
 import { useAuth } from "../../context/authContext";
 
-
 const AdminLogin = () => {
   const { setUser, setIsLogin, setIsAdmin } = useAuth();
 
