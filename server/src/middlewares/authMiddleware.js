@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import Admin from "../models/adminModel.js";
+import Resturant from "../models/resturantModel.js";
 
 export const Protect = async (req, res, next) => {
   try {
@@ -103,3 +104,35 @@ export const AdminProtect = async (req, res, next) => {
     next(error);
   }
 };
+
+export const ResturantProtect = async (req, res, next) => {
+  try {
+    const token = req.cookies.BhojanLoginKey;
+
+    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    console.log(decode);
+    if (!decode) {
+      const error = new Error("Not Authorized, No Token Found");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    const verifiedResturant = await Resturant.findById(decode.id);
+
+    if (!verifiedResturant) {
+      const error = new Error("Not Authorized, Invalid User");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    console.log(verifiedResturant);
+
+    req.resturant = verifiedResturant;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+

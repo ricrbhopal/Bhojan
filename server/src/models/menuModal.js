@@ -31,6 +31,12 @@ const menuSchema = mongoose.Schema(
         },
         imagePublicId: {
           type: String,
+          required: true,
+        },
+        isAvailable: {
+          type: String,
+          required: true,
+          default: "true",
         },
       },
     ],
